@@ -15,28 +15,20 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag demointerview:$(date +%s)
-  push-image:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Repo Checkout
-      uses: actions/checkout@v2
-  
-    - name: Login to Docker hub
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USER_NAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASS_TOKEN }}
-      run: docker login -u $DOCKER_USER -p $DOCKER_PASSWORD 
+      run: docker login -u $DOCKER_USER_NAME -p $DOCKER_PASSWORD 
 
     - name: Build the Docker image for Fastapi app
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USER_NAME }}
-      run: docker build . -f Dockerfile -t $DOCKER_USER/demointerview:latest
+      run: docker build . --file Dockerfile --tag $DOCKER_USER/demointerview:$(date +%s)
 
     - name: Push the Docker Image
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USER_NAME }}
-      run: docker push $DOCKER_USER/demointerview
+      run: docker push $DOCKER_USER/demointerview:$(date +%s)
 
     - name: Logout to Docker hub
       run: docker logout
