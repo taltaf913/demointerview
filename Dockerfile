@@ -1,23 +1,17 @@
-# Use the official Node.js 16 image
-FROM node:16
+FROM node:10-alpine
 
-# Set the working directory in the container
-WORKDIR /app
+RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 
-# Copy package.json and package-lock.json
+WORKDIR /home/node/app
+
 COPY package*.json ./
 
-# Install dependencies
+USER node
+
 RUN npm install
 
-# Copy the entire React app source code to the container
-COPY . .
+COPY --chown=node:node . .
 
-# Build the React app
-RUN npm run build
+EXPOSE 8080
 
-# Expose port 3000 (the port your Node.js app runs on)
-EXPOSE 3000
-
-# Start the Node.js app
-CMD ["npm", "start"]
+CMD [ "node", "app.js" ]
